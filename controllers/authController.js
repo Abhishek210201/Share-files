@@ -18,12 +18,16 @@ exports.sendOTP = async (req, res) => {
 
     console.log("Generated OTP:", otp);
 
-    res.json({ message: "OTP sent successfully ✅" });
+    res.json({
+      message: "OTP sent successfully",
+      otp: otp   
+    });
 
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 
 // VERIFY OTP
