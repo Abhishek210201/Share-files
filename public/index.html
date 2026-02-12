@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Device Sync</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="section center-box" style="display:block;">
+    <h2>Login via OTP</h2>
+    <input type="text" id="phone" placeholder="Enter Phone"><br>
+    <button onclick="sendOTP()">Send OTP</button><br><br>
+    <input type="text" id="otp" placeholder="Enter OTP"><br>
+    <button onclick="verifyOTP()">Verify OTP</button>
+  </div>
+
+  <!-- PAIR PAGE -->
+  <div id="pairPage" class="section center-box">
+    <h2>Connect Device</h2>
+    <button onclick="createSession()">Create Session</button><br><br>
+    <input type="text" id="pairInput" placeholder="Enter Pair Code">
+    <button onclick="joinSession()">Join Session</button>
+  </div>
+
+  <!-- CHAT PAGE -->
+  <div id="chatPage" class="section chat-container">
+
+    <div class="chat-header">
+      <h3 id="status">Not Connected</h3>
+    </div>
+
+    <div id="messages" class="chat-box"></div>
+
+    <div class="chat-input">
+      <input type="text" id="message" placeholder="Type message">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
