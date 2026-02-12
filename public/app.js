@@ -18,14 +18,17 @@ function showPage(pageId) {
 async function sendOTP() {
   const phone = document.getElementById("phone").value;
 
-  await fetch("/api/auth/send-otp", {
+  const res = await fetch("/api/auth/send-otp", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ phone })
   });
 
-  alert("OTP sent! Check terminal.");
+  const data = await res.json();
+
+  alert("Your OTP is: " + data.otp);
 }
+
 
 async function verifyOTP() {
   const phone = document.getElementById("phone").value;
