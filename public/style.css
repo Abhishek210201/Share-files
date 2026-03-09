@@ -313,7 +313,7 @@ button {
   margin-bottom: 8px;
 }
 
-/* IMPROVED: Message Bubbles with better alignment and styling */
+/* IMPROVED: Message Bubbles - CHHOTE BOXES FOR IMAGES! */
 .message {
   max-width: 75%;
   padding: 12px 16px;
@@ -327,6 +327,12 @@ button {
   hyphens: auto;
   position: relative;
   margin-bottom: 4px;
+}
+
+/* FIXED: Images ke liye chhota dabba - max 60% width! */
+.message:has(img) {
+  max-width: 60%;
+  padding: 8px;
 }
 
 @keyframes fadeIn {
@@ -429,15 +435,17 @@ button {
   text-decoration: underline;
 }
 
-/* IMPROVED: Image Messages with better styling */
+/* FIXED: Image Messages - CHHOTI SIZE! */
 .message img {
   max-width: 100%;
-  max-height: 400px;
+  max-height: 300px;
+  width: auto;
+  height: auto;
   border-radius: 12px;
-  margin-top: 8px;
+  margin-top: 4px;
   cursor: pointer;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .message img:hover {
@@ -716,6 +724,15 @@ button {
     font-size: 14px;
   }
 
+  /* Images ke liye mobile pe bhi chhota */
+  .message:has(img) {
+    max-width: 75%;
+  }
+
+  .message img {
+    max-height: 250px;
+  }
+
   .chat-header {
     padding: 12px 15px;
   }
@@ -780,6 +797,10 @@ button {
   .message {
     max-width: 70%;
   }
+
+  .message:has(img) {
+    max-width: 55%;
+  }
 }
 
 /* SMALL MOBILE (320px - 480px) */
@@ -809,6 +830,14 @@ button {
 
   .message {
     max-width: 90%;
+  }
+
+  .message:has(img) {
+    max-width: 85%;
+  }
+
+  .message img {
+    max-height: 200px;
   }
 }
 
