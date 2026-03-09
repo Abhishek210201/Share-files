@@ -11,6 +11,8 @@
   --text-secondary: #8e8e93;
   --border: #e5e5ea;
   --shadow: rgba(0, 0, 0, 0.1);
+  --sent-bg: #007aff;
+  --received-bg: #e9ecef;
 }
 
 * {
@@ -50,11 +52,9 @@ body {
   width: 100%;
   box-shadow: 0 10px 40px var(--shadow);
   animation: slideUp 0.3s ease;
-  /* FIXED: Ensure centering */
   margin: 0 auto;
 }
 
-/* FIXED: Specific styles for login and pair cards */
 .login-card,
 .pair-card {
   text-align: center;
@@ -209,6 +209,7 @@ button {
   display: none;
   font-weight: 500;
   animation: fadeInScale 0.3s ease;
+  white-space: pre-line;
 }
 
 @keyframes fadeInScale {
@@ -275,7 +276,7 @@ button {
   font-style: italic;
 }
 
-/* Chat Box - PROPER SCROLLING WITH FIXED INPUT */
+/* FIXED: Chat Box with proper scrolling */
 .chat-box {
   flex: 1;
   padding: 20px;
@@ -312,7 +313,7 @@ button {
   margin-bottom: 8px;
 }
 
-/* Messages - WITH PROPER WRAPPING */
+/* IMPROVED: Message Bubbles with better alignment and styling */
 .message {
   max-width: 75%;
   padding: 12px 16px;
@@ -324,6 +325,8 @@ button {
   overflow-wrap: break-word;
   word-break: break-word;
   hyphens: auto;
+  position: relative;
+  margin-bottom: 4px;
 }
 
 @keyframes fadeIn {
@@ -337,19 +340,50 @@ button {
   }
 }
 
+/* FIXED: Sent messages - right aligned with blue background */
 .sent {
   align-self: flex-end;
-  background: var(--primary);
+  background: var(--sent-bg);
   color: white;
   border-bottom-right-radius: 4px;
+  margin-left: auto;
 }
 
+/* FIXED: Received messages - left aligned with gray background */
 .received {
   align-self: flex-start;
-  background: white;
+  background: var(--received-bg);
   color: var(--text);
   border-bottom-left-radius: 4px;
-  border: 1px solid var(--border);
+  margin-right: auto;
+}
+
+/* System messages - centered */
+.message.system {
+  align-self: center;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-secondary);
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 90%;
+}
+
+.system-message-text {
+  text-align: center;
+  font-style: italic;
+}
+
+/* Message text content */
+.message-text {
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.message-caption {
+  margin-bottom: 8px;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 .message-time {
@@ -357,17 +391,28 @@ button {
   opacity: 0.7;
   margin-top: 4px;
   display: block;
+  text-align: right;
 }
 
 /* Link Preview */
 .link-preview {
   margin-top: 8px;
   padding: 10px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   border-left: 3px solid currentColor;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+.sent .link-preview {
+  background: rgba(255, 255, 255, 0.2);
+  border-left-color: white;
+}
+
+.received .link-preview {
+  background: rgba(0, 0, 0, 0.05);
+  border-left-color: var(--primary);
 }
 
 .link-preview a {
@@ -380,28 +425,47 @@ button {
   word-break: break-all;
 }
 
-/* Image Messages */
+.link-preview a:hover {
+  text-decoration: underline;
+}
+
+/* IMPROVED: Image Messages with better styling */
 .message img {
   max-width: 100%;
+  max-height: 400px;
   border-radius: 12px;
   margin-top: 8px;
   cursor: pointer;
   display: block;
+  object-fit: cover;
 }
 
-/* File Messages */
+.message img:hover {
+  opacity: 0.95;
+}
+
+/* IMPROVED: File Messages with better layout */
 .file-msg {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   margin-top: 8px;
 }
 
+.sent .file-msg {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.received .file-msg {
+  background: rgba(0, 0, 0, 0.05);
+}
+
 .file-icon {
   font-size: 32px;
+  flex-shrink: 0;
 }
 
 .file-details {
@@ -415,6 +479,7 @@ button {
   margin-bottom: 4px;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-size: 14px;
 }
 
 .file-size {
@@ -423,22 +488,32 @@ button {
 }
 
 .download-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
   padding: 8px 16px;
   border-radius: 8px;
   color: inherit;
   text-decoration: none;
   font-size: 13px;
   white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
 }
 
 .sent .download-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.sent .download-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .received .download-btn {
   background: var(--primary);
   color: white;
+}
+
+.received .download-btn:hover {
+  background: var(--primary-dark);
 }
 
 /* Chat Input Container - FIXED AT BOTTOM */
@@ -468,6 +543,7 @@ button {
   max-width: 100px;
   max-height: 100px;
   border-radius: 8px;
+  object-fit: cover;
 }
 
 .file-info {
@@ -503,7 +579,7 @@ button {
   background: #c41e3a;
 }
 
-/* IMPROVED: Action Bar with Labels */
+/* Action Bar with Labels */
 .action-bar {
   display: flex;
   gap: 12px;
@@ -729,6 +805,10 @@ button {
   .message-input-wrapper input {
     font-size: 14px;
     padding: 12px 14px;
+  }
+
+  .message {
+    max-width: 90%;
   }
 }
 

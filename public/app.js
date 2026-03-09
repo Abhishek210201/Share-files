@@ -272,13 +272,19 @@ async function sendMessage() {
   if (currentFile) {
     const fileData = await uploadFile();
     if (fileData) {
-      socket.emit("send-message", {
+      const messageData = {
         pairCode: currentPairCode,
         type: "file",
         file: fileData,
         sender: myId,
-        caption: message
-      });
+        caption: message || "" // Empty string instead of undefined
+      };
+
+      // FIXED: Show sent message immediately
+      addMessage(message || `📎 ${fileData.originalname}`, "sent", "file", fileData);
+      
+      // Then emit to server
+      socket.emit("send-message", messageData);
       
       cancelUpload();
       messageInput.value = "";
@@ -302,6 +308,14 @@ async function sendMessage() {
     messageData.url = message;
   }
 
+  // FIXED: Show sent message immediately
+  if (messageData.type === "link") {
+    addMessage(message, "sent", "link", null, messageData.url);
+  } else {
+    addMessage(message, "sent", "text");
+  }
+
+  // Then emit to server
   socket.emit("send-message", messageData);
   messageInput.value = "";
 }
@@ -363,36 +377,40 @@ function addMessage(content, type, messageType = "text", fileData = null, url = 
     
     if (isImage) {
       html = `
-        ${content ? `<div>${content}</div>` : ''}
+        ${content && content !== `📎 ${fileData.originalname}` ? `<div class="message-caption">${content}</div>` : ''}
         <img src="${fileData.path}" alt="${fileData.originalname}" onclick="window.open('${fileData.path}', '_blank')">
         <span class="message-time">${formatTime()}</span>
       `;
     } else {
       const icon = getFileIcon(fileData.mimetype);
       html = `
-        ${content ? `<div>${content}</div>` : ''}
+        ${content && content !== `📎 ${fileData.originalname}` ? `<div class="message-caption">${content}</div>` : ''}
         <div class="file-msg">
           <span class="file-icon">${icon}</span>
           <div class="file-details">
             <span class="file-name">${fileData.originalname}</span>
             <span class="file-size">${formatFileSize(fileData.size)}</span>
           </div>
-          <a href="${fileData.path}" download class="download-btn">Download</a>
+          <a href="${fileData.path}" download class="download-btn">⬇️</a>
         </div>
         <span class="message-time">${formatTime()}</span>
       `;
     }
   } else if (messageType === "link" && url) {
     html = `
-      <div>${content}</div>
+      <div class="message-text">${content}</div>
       <div class="link-preview">
         🔗 <a href="${url}" target="_blank">${url}</a>
       </div>
       <span class="message-time">${formatTime()}</span>
     `;
+  } else if (messageType === "system") {
+    html = `
+      <div class="system-message-text">${content}</div>
+    `;
   } else {
     html = `
-      <div>${content}</div>
+      <div class="message-text">${content}</div>
       <span class="message-time">${formatTime()}</span>
     `;
   }
@@ -434,25 +452,20 @@ socket.on("user-disconnected", () => {
   addMessage("❌ Device disconnected", "system", "system");
 });
 
+// FIXED: Only show messages from OTHER devices (not your own)
 socket.on("receive-message", (data) => {
+  // Skip if this is our own message (we already showed it)
   if (data.sender === myId) {
-    // My own message - show on right
-    if (data.type === "file") {
-      addMessage(data.caption, "sent", "file", data.file);
-    } else if (data.type === "link") {
-      addMessage(data.message, "sent", "link", null, data.url);
-    } else {
-      addMessage(data.message, "sent", "text");
-    }
+    return;
+  }
+
+  // This is from the other device - show on left
+  if (data.type === "file") {
+    addMessage(data.caption || `📎 ${data.file.originalname}`, "received", "file", data.file);
+  } else if (data.type === "link") {
+    addMessage(data.message, "received", "link", null, data.url);
   } else {
-    // Other device's message - show on left
-    if (data.type === "file") {
-      addMessage(data.caption, "received", "file", data.file);
-    } else if (data.type === "link") {
-      addMessage(data.message, "received", "link", null, data.url);
-    } else {
-      addMessage(data.message, "received", "text");
-    }
+    addMessage(data.message, "received", "text");
   }
 });
 
