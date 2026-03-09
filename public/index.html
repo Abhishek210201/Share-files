@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Device Sync</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Device Sync Pro - Share Files & Links</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -9,35 +11,127 @@
 
   <!-- LOGIN PAGE -->
   <div id="loginPage" class="section center-box" style="display:block;">
-    <h2>Login via OTP</h2>
-    <input type="text" id="phone" placeholder="Enter Phone"><br>
-    <button onclick="sendOTP()">Send OTP</button><br><br>
-    <input type="text" id="otp" placeholder="Enter OTP"><br>
-    <button onclick="verifyOTP()">Verify OTP</button>
+    <div class="card login-card">
+      <h1>🔐 Device Sync Pro</h1>
+      <p class="subtitle">Share files, images & links between devices</p>
+      
+      <input type="tel" id="phone" placeholder="Enter Phone Number" maxlength="10">
+      <button class="primary-btn" onclick="sendOTP()">Send OTP</button>
+      
+      <div id="otpSection" style="display:none; margin-top: 20px;">
+        <input type="text" id="otp" placeholder="Enter 6-digit OTP" maxlength="6">
+        <button class="primary-btn" onclick="verifyOTP()">Verify & Login</button>
+      </div>
+      
+      <div id="loginStatus" class="status-msg"></div>
+    </div>
   </div>
 
   <!-- PAIR PAGE -->
   <div id="pairPage" class="section center-box">
-    <h2>Connect Device</h2>
-    <button onclick="createSession()">Create Session</button><br><br>
-    <input type="text" id="pairInput" placeholder="Enter Pair Code">
-    <button onclick="joinSession()">Join Session</button>
+    <div class="card pair-card">
+      <h2>📱 Connect Your Devices</h2>
+      <p class="subtitle">Create a session or join existing one</p>
+      
+      <button class="primary-btn large" onclick="createSession()">
+        ✨ Create New Session
+      </button>
+      
+      <div class="divider">OR</div>
+      
+      <input type="text" id="pairInput" placeholder="Enter 6-digit Pair Code" maxlength="6">
+      <button class="secondary-btn" onclick="joinSession()">
+        🔗 Join Session
+      </button>
+      
+      <div id="pairStatus" class="status-msg"></div>
+    </div>
   </div>
 
-  <!-- CHAT PAGE -->
+  <!-- CHAT/SHARE PAGE -->
   <div id="chatPage" class="section chat-container">
 
+    <!-- Header -->
     <div class="chat-header">
-      <h3 id="status">Not Connected</h3>
+      <div class="header-left">
+        <h3 id="status">🔴 Not Connected</h3>
+        <span id="typingIndicator" class="typing-text"></span>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" onclick="copyPairCode()" title="Copy Pair Code">
+          📋
+        </button>
+        <button class="icon-btn" onclick="disconnect()" title="Disconnect">
+          ❌
+        </button>
+      </div>
     </div>
 
-    <div id="messages" class="chat-box"></div>
-
-    <div class="chat-input">
-      <input type="text" id="message" placeholder="Type message">
-      <button onclick="sendMessage()">Send</button>
+    <!-- Messages Area -->
+    <div id="messages" class="chat-box">
+      <div class="welcome-msg">
+        <h3>👋 Welcome!</h3>
+        <p>Start sharing files, images, links, and text</p>
+      </div>
     </div>
 
+    <!-- Input Area -->
+    <div class="chat-input-container">
+      
+      <!-- File Upload Preview -->
+      <div id="filePreview" class="file-preview" style="display:none;">
+        <img id="previewImage" style="display:none;">
+        <div id="previewFile" class="file-info" style="display:none;">
+          <span id="fileName"></span>
+          <span id="fileSize"></span>
+        </div>
+        <button class="close-btn" onclick="cancelUpload()">✕</button>
+      </div>
+
+      <!-- Actions Bar WITH LABELS! -->
+      <div class="action-bar">
+        <!-- File Upload Button -->
+        <label for="fileInput" class="action-btn" title="Upload File (Images, PDFs, Videos)">
+          <div class="action-icon">📎</div>
+          <div class="action-label">File</div>
+          <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelect(event)">
+        </label>
+        
+        <!-- Clipboard Share Button -->
+        <button class="action-btn" onclick="shareClipboard()" title="Share your clipboard content">
+          <div class="action-icon">📋</div>
+          <div class="action-label">Clipboard</div>
+        </button>
+        
+        <!-- Screenshot Button (Future) -->
+        <button class="action-btn" onclick="shareScreenshot()" title="Screenshot feature coming soon">
+          <div class="action-icon">📸</div>
+          <div class="action-label">Screenshot</div>
+        </button>
+      </div>
+
+      <!-- Message Input -->
+      <div class="message-input-wrapper">
+        <input 
+          type="text" 
+          id="message" 
+          placeholder="Type message or paste link..."
+          autocomplete="off"
+          onkeypress="handleKeyPress(event)"
+          oninput="handleTyping()"
+        >
+        <button class="send-btn" onclick="sendMessage()" title="Send message">
+          ➤
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay" style="display:none;">
+    <div class="spinner"></div>
+    <p>Uploading...</p>
   </div>
 
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>

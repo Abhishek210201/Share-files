@@ -5,18 +5,42 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    trim: true,
   },
   devices: [
     {
-      deviceId: String,
-      deviceName: String,
-      lastActive: Date,
+      deviceId: {
+        type: String,
+        required: true,
+      },
+      deviceName: {
+        type: String,
+        default: "Unknown Device",
+      },
+      lastActive: {
+        type: Date,
+        default: Date.now,
+      },
+      addedAt: {
+        type: Date,
+        default: Date.now,
+      }
     }
   ],
   createdAt: {
     type: Date,
     default: Date.now,
+  },
+  lastLogin: {
+    type: Date,
+    default: Date.now,
   }
+});
+
+// Update lastLogin on save
+userSchema.pre('save', function(next) {
+  this.lastLogin = new Date();
+  next();
 });
 
 module.exports = mongoose.model("User", userSchema);
