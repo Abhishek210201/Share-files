@@ -20,8 +20,10 @@ app.use(helmet({
   contentSecurityPolicy: false, // Allow inline scripts for Socket.io
 }));
 app.use(compression());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// LIMIT CHANGED: 10mb se 500mb kar diya gaya hai
+app.use(express.json({ limit: '500mb' }));
+app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -65,11 +67,13 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+  // LIMIT CHANGED: 50MB se 500MB kar diya gaya hai
+  limits: { fileSize: 500 * 1024 * 1024 }, 
   fileFilter: fileFilter
 });
 
-// MongoDB Connection
+// FIXED: MongoDB Connection with direct URL
+// Galti se bhi original URL yahan mat likhiye
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => {
@@ -108,7 +112,8 @@ const server = http.createServer(app);
 // Socket.IO Configuration
 const io = new Server(server, {
   cors: { origin: "*" },
-  maxHttpBufferSize: 50 * 1024 * 1024 // 50MB
+  // LIMIT CHANGED: Socket.io buffer 50MB se 500MB kar diya gaya hai
+  maxHttpBufferSize: 500 * 1024 * 1024 
 });
 
 // Store active sessions
